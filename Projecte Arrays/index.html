@@ -5,10 +5,31 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Document</title>
+	<link href="styles.css" rel="stylesheet" />
 </head>
 <body>
+	<div id="buttons">
+		<button onclick="creaTaula()">Iniciar</button>
+		<button onclick="refresh()">Refresh</button>
+		<button onclick="orderList('asc')">Order DESC</button>
+		<button onclick="orderList('desc')">Order ASC</button>
+		<button onclick="searchList()">Buscar</button>
+		<button onclick="calcMitjana()">Calc Mitjana</button>
+	</div>
+
+	<div id="radio_buttons">
+		<input type="radio" id="pokemons" name="dades" value="pokemons">
+		<label for="pokemons">Pokémons</label><br>
+		<input type="radio" id="municipis" name="dades" value="municipis">
+		<label for="municipis">Municipis</label><br>
+		<input type="radio" id="meteorits" name="dades" value="meteorits">
+		<label for="meteorits">Meteorits</label><br>
+		<input type="radio" id="movies" name="dades" value="movies">
+		<label for="movies">Movies</label>
+	</div>
+	
 	<div id="resultat">
-		<button onclick="mostraTaula()">Mostra</button>
+		
 	</div>
 	<script src="js/script.js"></script>
 </body>
