@@ -19,7 +19,8 @@ fetch("js/data/pokemon.json")
 		let dadesPokemon = [];
 		dadesPokemon[0] = dada.name;
 		dadesPokemon[1] = dada.img;
-		dadesPokemon[2] = dada.weight;
+		dadesPokemon[2] = dada.num;
+		dadesPokemon[3] = (dada.weight).substring(0, (dada.weight).length-3);
 
 		pokemons.push(dadesPokemon);
 	});
@@ -37,7 +38,13 @@ fetch("js/data/municipis.json")
 	dades = data.elements;
 
 	dades.forEach(dada => {
-		municipis.push(dada.municipi_nom);
+		let dadesMunicipi = [];
+		dadesMunicipi[0] = dada.municipi_nom;
+		dadesMunicipi[1] = dada.municipi_escut;
+		dadesMunicipi[2] = dada.ine;
+		dadesMunicipi[3] = dada.nombre_habitants;
+
+		municipis.push(dadesMunicipi);
 	});
 
 
@@ -54,7 +61,13 @@ fetch("js/data/earthMeteorites.json")
 	dades = data;
 
 	dades.forEach(dada => {
-		meteorits.push(dada.name);
+		let dadesMeteorit = [];
+		dadesMeteorit[0] = dada.name;
+		dadesMeteorit[1] = dada.id;
+		dadesMeteorit[2] = dada.year != undefined ? (dada.year).substring(0, 4) : dada.year;
+		dadesMeteorit[3] = dada.mass;
+
+		meteorits.push(dadesMeteorit);
 	});
 
 	
@@ -71,7 +84,13 @@ fetch("js/data/movies.json")
 	dades = data.movies;
 
 	dades.forEach(dada => {
-		movies.push(dada.title);
+		let dadesMovie = [];
+		dadesMovie[0] = dada.title;
+		dadesMovie[1] = dada.genres;
+		dadesMovie[2] = dada.year;
+		dadesMovie[3] = dada.rating;
+
+		movies.push(dadesMovie);
 	});
 	
 
@@ -92,11 +111,7 @@ function creaTaula() {
 		taula[i] = dades;
 	};
 	console.table(taula);
-	let dada = getRadioButton();
-	if (dada == 'pokemons') printList(pokemons);
-	if (dada == 'municipis') printList(mu);
-	if (dada == 'meteorits') printList(meteorits);
-	if (dada == 'movies') printList(movies);
+	printList(getDades());
 }
 
 function refresh() {
@@ -113,6 +128,11 @@ function orderList(orden) {
 		creaTaula();
 	}
 	else if (orden == 'asc') {
+		pokemons.sort();
+		municipis.sort();
+		meteorits.sort();
+		movies.sort();
+
 		pokemons.reverse();
 		municipis.reverse();
 		meteorits.reverse();
@@ -123,54 +143,106 @@ function orderList(orden) {
 
 function searchList() {
 	let text = prompt("Introdueix text");
-	if (text == null) return printList(getRadioButton());
-	
-	let resultat = [];
-	getRadioButton().forEach(dada => {
+	let dades = [];
+	getDades().forEach(dada => {
 		if (dada[0].toLowerCase().includes(text.toLowerCase())) {
-			resultat.push(dada);
+			dades.push(dada);
 		}
 	});
-	if (resultat.length==0) return alert('Not found!');
-	printList(resultat);
+	if (dades.length==0) return alert('Not found!');
+	printList(dades);
 }
 
 function calcMitjana() {
-	let weight = 0;
-	// Calcula total pes
-	pokemons.forEach(pokemon => {
-		weight += parseInt(pokemon[2].substring(0, pokemon[2].length-3));
+	let mitjana = 0;
+	// Calcula total
+	getDades().forEach(dada => {
+		if (dada[3] != undefined) mitjana += parseInt(dada[3]);
 	});
 	// Calcula mitjana pes
-	weight /= pokemons.length;
-	weight = weight.toFixed(2);
-	console.log(weight);
-}
-
-function printList(resultat) {
-	let divTable = document.getElementById('resultat');
-	// table
-	let table = '<table>';
-	// th
-	table += '<tr><th>#</th><th>Imatge</th><th>Nom</th><th>Pes</th></tr>';
-	let i = 0;
-	resultat.forEach(dada => {
-		// tr
-		table += '<tr>';
-		// td
-		table += `<td>${i}</td><td><img src='${dada[1]}'></td><td>${dada[0]}</td><td>${dada[2]}</td>`;
-		table += '</tr>';
-		i++;
-	});
-	table += '</table>';
-	divTable.innerHTML = table;
+	mitjana /= getDades().length;
+	mitjana = mitjana.toFixed(2);
+	
+	let p = document.getElementById('mitjana');
+	if (getRadioButton() == 'pokemons' || getRadioButton() == 'meteorits') p.innerHTML = mitjana + ' kg';
+	if (getRadioButton() == 'municipis')  p.innerHTML = mitjana + ' habitants';
+	if (getRadioButton() == 'movies') p.innerHTML = mitjana + ' punts';
 }
 
 function getRadioButton() {
-	if (document.getElementById("pokemons").checked) return document.getElementById("pokemons").value;
-	if (document.getElementById("municipis").checked) return document.getElementById("municipis").value;
-	if (document.getElementById("meteorits").checked) return document.getElementById("meteorits").value;
-	if (document.getElementById("movies").checked) return document.getElementById("movies").value;
+	if (document.getElementById("pokemons").checked) return document.getElementById('pokemons').value;
+	if (document.getElementById("municipis").checked) return document.getElementById('municipis').value;
+	if (document.getElementById("meteorits").checked) return document.getElementById('meteorits').value;
+	if (document.getElementById("movies").checked) return document.getElementById('movies').value;	
+}
+
+function getDades() {
+	let tipusDada = getRadioButton();
+	if (tipusDada == 'pokemons') return pokemons;
+	if (tipusDada == 'municipis') return municipis;
+	if (tipusDada == 'meteorits') return meteorits;
+	if (tipusDada == 'movies') return movies;
 
 	return alert('Selecciona un tipus de dada');
+} 
+
+
+function printList(dades) {
+	let tipusDada = getRadioButton();
+	let divTable = document.getElementById('resultat');
+	// table
+	let table = '<table>';
+
+	switch (tipusDada) {
+		case 'pokemons':
+			// th
+			table += '<tr><th>#</th><th>Imatge</th><th>Nom</th><th>Pes</th></tr>';
+			dades.forEach(dada => {
+				// tr
+				table += '<tr>';
+				// td
+				table += `<td>${dada[2]}</td><td><img src='${dada[1]}'></td><td>${dada[0]}</td><td>${dada[3]}</td>`;
+				table += '</tr>';
+			});
+		break;
+	
+		case 'municipis':
+			// th
+			table += '<tr><th>Nom</th><th>Escut</th><th>INE</th><th>Habitants</th></tr>';
+			dades.forEach(dada => {
+				// tr
+				table += '<tr>';
+				// td
+				table += `<td>${dada[0]}</td><td><img src='${dada[1]}'></td><td>${dada[2]}</td><td>${dada[3]}</td>`;
+				table += '</tr>';
+			});
+		break;
+
+		case 'meteorits':
+			// th
+			table += '<tr><th>Nom</th><th>#</th><th>Any</th><th>Masa</th></tr>';
+			dades.forEach(dada => {
+				// tr
+				table += '<tr>';
+				// td
+				table += `<td>${dada[0]}</td><td>${dada[1]}</td><td>${dada[2]}</td><td>${dada[3]}</td>`;
+				table += '</tr>';
+			});
+		break;
+
+		case 'movies':
+			// th
+			table += '<tr><th>Title</th><th>Genres</th><th>Any</th><th>Rating</th></tr>';
+			dades.forEach(dada => {
+				// tr
+				table += '<tr>';
+				// td
+				table += `<td>${dada[0]}</td><td>${dada[1]}</td><td>${dada[2]}</td><td>${dada[3]}</td>`;
+				table += '</tr>';
+			});
+		break;
+	}
+
+	table += '</table>';
+	divTable.innerHTML = table;
 }
