@@ -10,6 +10,9 @@ let municipis = [];
 let meteorits = [];
 let movies = [];
 
+// Polar Chart
+let myChart;
+
 // POKEMONS
 fetch("js/data/pokemon.json")
 .then((response) => response.json())
@@ -244,4 +247,66 @@ function printList(dades) {
 
 	table += '</table>';
 	divTable.innerHTML = table;
+
+	// Creamos el Polar Chart
+	creaChart(tipusDada);
 }
+
+/* Función que crea un Polar Chart
+   Los datos de los pokemons son el tipo
+   Los datos de las movies es el género */
+function creaChart(tipusDada) {
+	// Arrays para el Polar Chart
+	let arrayLabels = []; // Labels
+	let arrayLabelsGraf = []; // Valores de Labels
+	let borderColor = []; // Color del Borde
+	let backgroundColor = []; // Color del Fondo
+
+	if (myChart != null) myChart.destroy(); // Destruimos el Chart si ya existe
+
+	if (tipusDada == 'pokemons') {
+		// POKEMONS
+		arrayLabels = ["Grass", "Poison", "Fire", "Flying", "Water", "Bug", "Normal", "Electric", "Ground", "Fighting", "Psychic", "Rock", "Ice", "Ghost", "Dragon"];
+		arrayLabelsGraf = [14, 33, 12, 19, 32, 12, 24, 9, 14, 8, 14, 11, 5, 3, 3];
+		for (let i = 0; i < arrayLabels.length; i++) {
+			borderColor[i] = `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`;
+		}
+		for (let i = 0; i < borderColor.length; i++) {
+			backgroundColor[i] = `${borderColor[i].substring(0, borderColor[i].length - 1)}, 0.2)`;
+		}
+	} else if (tipusDada == 'movies') {
+		// MOVIES
+		arrayLabels = ["Drama", "Crime", "Action", "Thriller", "Biography", "History", "Adventure", "Fantasy", "Western", "Romance", "Sci-Fi", "Mystery", "Comedy", "War", "Family", "Animation", "Musical", "Music", "Horror", "Film-Noir", "Sport"];
+		arrayLabelsGraf = [185, 53, 39, 60, 27, 15, 57, 28, 8, 27, 32, 33, 44, 28, 25, 22, 5, 8, 4, 6, 10];
+		for (let i = 0; i < arrayLabels.length; i++) {
+			borderColor[i] = `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`;
+		}
+		for (let i = 0; i < borderColor.length; i++) {
+			backgroundColor[i] = `${borderColor[i].substring(0, borderColor[i].length - 1)}, 0.2)`;
+		}
+	} else return;
+
+	// Variable con los datos del Polar Chart
+	const data = {
+	  labels: arrayLabels,
+	  datasets: [{
+		label: 'Gráfico de Datos',
+		data: arrayLabelsGraf,
+		backgroundColor: backgroundColor,
+		borderColor: borderColor
+	  }]
+	};
+
+	// Variable de configuración del Polar Chart
+	const config = {
+	  type: 'polarArea',
+	  data: data,
+	  options: {}
+  	};
+
+	// Polar Chart
+	myChart = new Chart(
+	  document.getElementById('myChart'),
+	  config
+	);
+} 
