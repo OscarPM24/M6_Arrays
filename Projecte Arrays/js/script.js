@@ -15,6 +15,7 @@ let myChart;
 
 let iniciado = false; // Booleano que indica si la tabla se ha iniciado o no
 let orderAsc; // Booleano que indica si la tabla se ordena ascendente o descendente
+let indexTmp; // Variable que almacena el último index del orderList
 
 // POKEMONS
 fetch("js/data/pokemon.json")
@@ -121,11 +122,21 @@ function refresh() {
 
 /* Función que ordena la lista principal.
    Recibe por parámetros si el órden es ascendente o descendente */
-function orderList(index) {
-	//console.clear();
-	if (orderAsc == true) { getDades().sort(function(a, b) {return a[0]<b[0]}) ;orderAsc = false; }
-	else { getDades().reverse(function(a, b) {return a[0]<b[0]}) ;orderAsc = false; }
-	creaTaula(); // Vuelve a crear la tabla ordenada
+   function orderList(index) {
+	if (index != indexTmp) orderAsc = true;
+    // console.clear();
+	console.log("index " +index)
+    let dades = getDades();
+	console.log(isNaN(parseInt(dades[10][index])))
+	if (!isNaN(parseInt(dades[10][index]))) { // Si el valor a ordenar es un número
+        if (orderAsc) { dades.sort((a, b) => a[index] - b[index]); orderAsc = false; } 
+		else { dades.sort((a, b) => b[index] - a[index]); orderAsc = true; }
+    } else { // Si el valor a ordenar no es un número
+		if (orderAsc) { dades.sort((a, b) => a[index].localeCompare(b[index])); orderAsc = false; } 
+		else { dades.sort((a, b) => b[index].localeCompare(a[index])); orderAsc = true; }
+	}
+	indexTmp = index;
+    creaTaula(); // Vuelve a crear la tabla ordenada
 }
 
 /* Event Listener que detecta cada vez que escrivimos en la barra de búsqueda 
@@ -215,7 +226,7 @@ function printList(dades) {
 		
 			case 'municipis': // MUNICIPIS 
 				// th
-				table += '<tr><th>Nom</th><th>Escut</th><th>INE</th><th>Habitants</th></tr>';
+				table += '<tr><th onclick="orderList(0)">Nom</th><th>Escut</th><th onclick="orderList(2)">INE</th><th onclick="orderList(3)">Habitants</th></tr>';
 				dades.forEach(dada => {
 					// tr
 					table += '<tr>';
@@ -227,7 +238,7 @@ function printList(dades) {
 
 			case 'meteorits': // METEORITS
 				// th
-				table += '<tr><th>Nom</th><th>#</th><th>Year</th><th>Masa</th></tr>';
+				table += '<tr><th onclick="orderList(0)">Nom</th><th onclick="orderList(1)">#</th><th onclick="orderList(2)">Year</th><th onclick="orderList(3)">Masa</th></tr>';
 				dades.forEach(dada => {
 					// tr
 					table += '<tr>';
@@ -239,7 +250,7 @@ function printList(dades) {
 			
 			case 'movies': // MOVIES
 				// th
-				table += '<tr><th>Title</th><th>Genres</th><th>Year</th><th>Rating</th></tr>';
+				table += '<tr><th onclick="orderList(0)">Title</th><th>Genres</th><th onclick="orderList(2)">Year</th><th onclick="orderList(3)">Rating</th></tr>';
 				dades.forEach(dada => {
 					// tr
 					table += '<tr>';
@@ -256,13 +267,13 @@ function printList(dades) {
 	iniciado = true;
 	
 	// Creamos el Polar Chart
-	creaChart(tipusDada);
+	creaChart(dades);
 }
 
 /* Función que crea un Polar Chart
    Los datos de los pokemons son el tipo
    Los datos de las movies es el género */
-function creaChart(tipusDada) {
+function creaChart(dades) {
 	// Arrays para el Polar Chart
 	let arrayLabels = []; // Labels
 	let arrayLabelsGraf = []; // Valores de Labels
@@ -271,14 +282,24 @@ function creaChart(tipusDada) {
 
 	if (myChart != null) myChart.destroy(); // Destruimos el Chart si ya existe
 
-	if (tipusDada == 'pokemons') {
+	if (getRadioButton() == 'pokemons') {
 		// POKEMONS
 		arrayLabels = ["Grass", "Poison", "Fire", "Flying", "Water", "Bug", "Normal", "Electric", "Ground", "Fighting", "Psychic", "Rock", "Ice", "Ghost", "Dragon"];
-		arrayLabelsGraf = [14, 33, 12, 19, 32, 12, 24, 9, 14, 8, 14, 11, 5, 3, 3];
-	} else if (tipusDada == 'movies') {
+		arrayLabelsGraf = new Array(15).fill(0); // Array de 15 posiciones con 0 en cada posición
+		dades.forEach(dada => { // Datos pokemon
+			dada[4].forEach(tipus => { // Tipos pokemon
+				arrayLabelsGraf[arrayLabels.indexOf(tipus)] += 1;
+			});
+		});
+	} else if (getRadioButton() == 'movies') {
 		// MOVIES
 		arrayLabels = ["Drama", "Crime", "Action", "Thriller", "Biography", "History", "Adventure", "Fantasy", "Western", "Romance", "Sci-Fi", "Mystery", "Comedy", "War", "Family", "Animation", "Musical", "Music", "Horror", "Film-Noir", "Sport"];
-		arrayLabelsGraf = [185, 53, 39, 60, 27, 15, 57, 28, 8, 27, 32, 33, 44, 28, 25, 22, 5, 8, 4, 6, 10];
+		arrayLabelsGraf = new Array(21).fill(0); // Array de 21 posiciones con 0 en cada posición
+		dades.forEach(dada => { // Datos movie
+			dada[1].forEach(tipus => { // Tipos movie
+				arrayLabelsGraf[arrayLabels.indexOf(tipus)] += 1;
+			});
+		});
 	} else return;
 
 	// For que por cada label asigna un color rgb aleatorio al array borderColor
