@@ -9,12 +9,11 @@
 </head>
 <body>
 	<div id="buttons">
-		<button onclick="creaTaula()">Iniciar</button>
 		<button onclick="refresh()">Refresh</button>
-		<button onclick="orderList('asc')">Order DESC</button>
-		<button onclick="orderList('desc')">Order ASC</button>
+		<!-- <button onclick="orderList('asc')">Order DESC</button> -->
+		<!-- <button onclick="orderList('desc')">Order ASC</button> -->
 		<!-- <button onclick="searchList()">Buscar</button> -->
-		<button onclick="calcMitjana()">Calc Mitjana</button>
+		<button onclick="calcMitjana(getDades())">Calc Mitjana</button>
 		<p id="mitjana"></p>
 	</div>
 
@@ -23,22 +22,24 @@
 	</div>
 
 	<div id="radio_buttons">
-		<input type="radio" id="pokemons" name="dades" value="pokemons">
+		<input type="radio" onclick="creaTaula()" id="pokemons" name="dades" value="pokemons">
 		<label for="pokemons">Pokémons</label><br>
-		<input type="radio" id="municipis" name="dades" value="municipis">
+		<input type="radio" onclick="creaTaula()" id="municipis" name="dades" value="municipis">
 		<label for="municipis">Municipis</label><br>
-		<input type="radio" id="meteorits" name="dades" value="meteorits">
+		<input type="radio" onclick="creaTaula()" id="meteorits" name="dades" value="meteorits">
 		<label for="meteorits">Meteorits</label><br>
-		<input type="radio" id="movies" name="dades" value="movies">
+		<input type="radio" onclick="creaTaula()" id="movies" name="dades" value="movies">
 		<label for="movies">Movies</label>
 	</div>
 	
-	<div id="resultat">
+	<div class="resultat_chart">
+		<div id="resultat">
 		
-	</div>
-
-	<div class="chart-container" style="position: relative; width:700px">
-		<canvas id="myChart"></canvas>
+		</div>
+	
+		<div class="chart-container" style="position: relative; width:700px">
+			<canvas id="myChart"></canvas>
+		</div>
 	</div>
 
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

@@ -20,9 +20,9 @@ let borderColor = []; // Color del Borde
 let backgroundColor = []; // Color del Fondo
 
 
-let iniciado = false; // Booleano que indica si el chart se ha iniciado o no
+let iniciado = false; // Booleano que indica si la tabla se ha iniciado o no
 let orderAsc; // Booleano que indica si la tabla se ordena ascendente o descendente
-let ultimaDada; // Variable que almacena el último dato ordenado
+let indexTmp; // Variable que almacena el último index del orderList
 
 // POKEMONS
 fetch("js/data/pokemon.json")
@@ -31,16 +31,18 @@ fetch("js/data/pokemon.json")
 	dades = data.pokemon;
 
 	dades.forEach(dada => {
-		let dadesPokemon = {
-			name: dada.name, // nombre
-			img: dada.img, // imagen pokemon
-			num: dada.num, // número
-			weight: (dada.weight).substring(0, (dada.weight).length-3), // peso (sólo número)
-			type: dada.type
-		};
+		let dadesPokemon = [];
+		dadesPokemon[0] = dada.name; // nom
+		dadesPokemon[1] = dada.img; // imatge
+		dadesPokemon[2] = dada.num; // numero
+		dadesPokemon[3] = (dada.weight).substring(0, (dada.weight).length-3); // pes (solo número)
+		dadesPokemon[4] = dada.type;
 
 		pokemons.push(dadesPokemon);
 	});
+
+	//console.log(dades)
+	//console.log(dades[0].name)
 });
 
 // MUNICIPIS
@@ -50,15 +52,17 @@ fetch("js/data/municipis.json")
 	dades = data.elements;
 
 	dades.forEach(dada => {
-		let dadesMunicipi = {
-		name: dada.municipi_nom, // nombre
-		escut: dada.municipi_escut, // imagen escudo
-		ine: dada.ine, // ine
-		habitants: dada.nombre_habitants // habitantes
-		};
+		let dadesMunicipi = [];
+		dadesMunicipi[0] = dada.municipi_nom; // nom
+		dadesMunicipi[1] = dada.municipi_escut; // imatge escudo
+		dadesMunicipi[2] = dada.ine; // ine
+		dadesMunicipi[3] = dada.nombre_habitants; // habitantes
 
 		municipis.push(dadesMunicipi);
 	});
+
+	//console.log(dades)
+	//console.log(dades[0].municipi_nom)
 });
 
 // METEORITS
@@ -68,15 +72,17 @@ fetch("js/data/earthMeteorites.json")
 	dades = data;
 
 	dades.forEach(dada => {
-		let dadesMeteorit = {
-		name: dada.name, // nom
-		id: dada.id, // id 
-		year: dada.year != undefined ? (dada.year).substring(0, 4) : dada.year, // año (sólo número)
-		mass: dada.mass != undefined ? dada.mass : 0 // masa (si es undefined, le ponemos 0)
-		};
+		let dadesMeteorit = [];
+		dadesMeteorit[0] = dada.name; // nom
+		dadesMeteorit[1] = dada.id; // id 
+		dadesMeteorit[2] = dada.year != undefined ? (dada.year).substring(0, 4) : dada.year; // año (solo número)
+		dadesMeteorit[3] = dada.mass; // masa
 
 		meteorits.push(dadesMeteorit);
 	});
+
+	//console.log(dades)
+	//console.log(dades[0].name)
 });
 
 // MOVIES
@@ -86,20 +92,23 @@ fetch("js/data/movies.json")
 	dades = data.movies;
 
 	dades.forEach(dada => {
-		let dadesMovie = {
-		name: dada.title, // titulo
-		genres: dada.genres, // generos
-		year: dada.year, // año
-		rating: dada.rating // rating
-		};
+		let dadesMovie = [];
+		dadesMovie[0] = dada.title; // titulo
+		dadesMovie[1] = dada.genres; // generos
+		dadesMovie[2] = dada.year; // año
+		dadesMovie[3] = dada.rating; // rating
 
 		movies.push(dadesMovie);
 	});
+
+	//console.log(dades)
+	//console.log(dades[0].title)
 });
 
 /* Función que crea la tabla principal 
    (pos 0 = pokemons, pos 1 = municipis, pos 2 = meteorits, pos 3 = movies) */
 function creaTaula() {
+	//console.clear()
 	for (let i = 0; i < 1000; i++) {
 		let dades = [];
 		dades[0] = pokemons[i],
@@ -109,26 +118,31 @@ function creaTaula() {
 
 		taula[i] = dades;
 	};
-	
+	//console.table(taula);
 	printList(getDades()); // Printea la tabla en pantalla
 }
 
 /* Función que recarga la página (F5) */
-function refresh() { location.reload(); }
+function refresh() {
+	location.reload();
+}
 
 /* Función que ordena la lista principal.
    Recibe por parámetros si el órden es ascendente o descendente */
-   function orderList(dada) {
-	if (dada != ultimaDada) orderAsc = true;
+   function orderList(index) {
+	if (index != indexTmp) orderAsc = true;
+    // console.clear();
+	console.log("index " +index)
     let dades = getDades();
-	if (!isNaN(parseInt(dades[0][dada]))) { // Si el valor a ordenar es un número
-        if (orderAsc) { dades.sort((a, b) => a[dada] - b[dada]); orderAsc = false; } 
-		else { dades.sort((a, b) => b[dada] - a[dada]); orderAsc = true; }
+	console.log(isNaN(parseInt(dades[10][index])))
+	if (!isNaN(parseInt(dades[10][index]))) { // Si el valor a ordenar es un número
+        if (orderAsc) { dades.sort((a, b) => a[index] - b[index]); orderAsc = false; } 
+		else { dades.sort((a, b) => b[index] - a[index]); orderAsc = true; }
     } else { // Si el valor a ordenar no es un número
-		if (orderAsc) { dades.sort((a, b) => a[dada].localeCompare(b[dada])); orderAsc = false; } 
-		else { dades.sort((a, b) => b[dada].localeCompare(a[dada])); orderAsc = true; }
+		if (orderAsc) { dades.sort((a, b) => a[index].localeCompare(b[index])); orderAsc = false; } 
+		else { dades.sort((a, b) => b[index].localeCompare(a[index])); orderAsc = true; }
 	}
-	ultimaDada = dada;
+	indexTmp = index;
     creaTaula(); // Vuelve a crear la tabla ordenada
 }
 
@@ -146,7 +160,7 @@ function searchList(inputSearch) {
 		let dades = [];
 		// Foreach que comprueba si el elemento de la list contiene el texto del input HTML
 		getDades().forEach(dada => {
-			if (dada.name.toLowerCase().includes(inputSearch.toLowerCase())) {
+			if (dada[0].toLowerCase().includes(inputSearch.toLowerCase())) {
 				dades.push(dada);
 			}
 		});
@@ -155,20 +169,15 @@ function searchList(inputSearch) {
 }
 
 /* Función que calcula la media del elemento de la lista, y la muestra por pantalla */
-function calcMitjana(dades) {
+function calcMitjana() {
 	let mitjana = 0;
-	let radio = getRadioButton();
-	let tipusDada;
-	if (radio == 'pokemons') tipusDada = "weight";
-	if (radio == 'meteorits') tipusDada = "mass";
-	if (radio == 'municipis') tipusDada = "habitants";
-	if (radio == 'movies') tipusDada = "rating";
-
 	// Calcula total
-	dades.forEach(dada => { mitjana += parseInt(dada[tipusDada]); });
-	
+	getDades().forEach(dada => {
+		// dada[3] siempre será el dato que se va a ordenar, sea cual sea el tipo de dato 
+		if (dada[3] != undefined) mitjana += parseInt(dada[3]);
+	});
 	// Calcula mitjana
-	mitjana /= dades.length;
+	mitjana /= getDades().length;
 	mitjana = mitjana.toFixed(2);
 	
 	let p = document.getElementById('mitjana');
@@ -212,55 +221,59 @@ function printList(dades) {
 		switch (tipusDada) {
 			case 'pokemons': // POKEMONS
 				// th
-				table += `<tr><th onclick="orderList('num')">#</th><th>Imatge</th><th onclick="orderList('name')">Nom</th><th onclick="orderList('weight')">Pes</th></tr>`;
+				table += '<tr><th onclick="orderList(2)">#</th><th>Imatge</th><th onclick="orderList(0)">Nom</th><th onclick="orderList(3)">Pes</th></tr>';
 				dades.forEach(dada => {
 					// tr
 					table += '<tr>';
 					// td
-					table += `<td>${dada.num}</td><td><img src='${dada.img}'></td><td>${dada.name}</td><td>${dada.weight}</td>`;
+					table += `<td>${dada[2]}</td><td><img src='${dada[1]}'></td><td>${dada[0]}</td><td>${dada[3]}</td>`;
+					table += '</tr>';
 				});
 			break;
 		
 			case 'municipis': // MUNICIPIS 
 				// th
-				table += `<tr><th onclick="orderList('name')">Nom</th><th>Escut</th><th onclick="orderList('ine')">INE</th><th onclick="orderList('habitants')">Habitants</th></tr>`;
+				table += '<tr><th onclick="orderList(0)">Nom</th><th>Escut</th><th onclick="orderList(2)">INE</th><th onclick="orderList(3)">Habitants</th></tr>';
 				dades.forEach(dada => {
 					// tr
 					table += '<tr>';
 					// td
-					table += `<td>${dada.name}</td><td><img src='${dada.escut}'></td><td>${dada.ine}</td><td>${dada.habitants}</td>`;
+					table += `<td>${dada[0]}</td><td><img src='${dada[1]}'></td><td>${dada[2]}</td><td>${dada[3]}</td>`;
+					table += '</tr>';
 				});
 			break;
 
 			case 'meteorits': // METEORITS
 				// th
-				table += `<tr><th onclick="orderList('name')">Nom</th><th onclick="orderList('id')">#</th><th onclick="orderList('year')">Year</th><th onclick="orderList('mass')">Masa</th></tr>`;
+				table += '<tr><th onclick="orderList(0)">Nom</th><th onclick="orderList(1)">#</th><th onclick="orderList(2)">Year</th><th onclick="orderList(3)">Masa</th></tr>';
 				dades.forEach(dada => {
 					// tr
 					table += '<tr>';
 					// td
-					table += `<td>${dada.name}</td><td>${dada.id}</td><td>${dada.year}</td><td>${dada.mass}</td>`;
+					table += `<td>${dada[0]}</td><td>${dada[1]}</td><td>${dada[2]}</td><td>${dada[3]}</td>`;
+					table += '</tr>';
 				});
 			break;
 			
 			case 'movies': // MOVIES
 				// th
-				table += `<tr><th onclick="orderList('name')">Title</th><th>Genres</th><th onclick="orderList('year')">Year</th><th onclick="orderList('rating')">Rating</th></tr>`;
+				table += '<tr><th onclick="orderList(0)">Title</th><th>Genres</th><th onclick="orderList(2)">Year</th><th onclick="orderList(3)">Rating</th></tr>';
 				dades.forEach(dada => {
 					// tr
 					table += '<tr>';
 					// td
-					table += `<td>${dada.name}</td><td>${dada.genres}</td><td>${dada.year}</td><td>${dada.rating}</td>`;
+					table += `<td>${dada[0]}</td><td>${dada[1]}</td><td>${dada[2]}</td><td>${dada[3]}</td>`;
+					table += '</tr>';
 				});
 			break;
 		}
 	}
-	table += '</tr>';
 	table += '</table>';
 	divTable.innerHTML = table;
 
 	// Creamos el Polar Chart
 	creaChart(dades);
+	iniciado = true;
 }	
 
 /* Función que crea un Polar Chart
@@ -274,7 +287,7 @@ function creaChart(dades) {
 		arrayLabels = ["Grass", "Poison", "Fire", "Flying", "Water", "Bug", "Normal", "Electric", "Ground", "Fighting", "Psychic", "Rock", "Ice", "Ghost", "Dragon"];
 		arrayLabelsGraf = new Array(15).fill(0); // Array de 15 posiciones con 0 en cada posición
 		dades.forEach(dada => { // Datos pokemon
-			dada.type.forEach(tipus => { // Tipos pokemon
+			dada[4].forEach(tipus => { // Tipos pokemon
 				arrayLabelsGraf[arrayLabels.indexOf(tipus)] += 1;
 			});
 		});
@@ -283,13 +296,13 @@ function creaChart(dades) {
 		arrayLabels = ["Drama", "Crime", "Action", "Thriller", "Biography", "History", "Adventure", "Fantasy", "Western", "Romance", "Sci-Fi", "Mystery", "Comedy", "War", "Family", "Animation", "Musical", "Music", "Horror", "Film-Noir", "Sport"];
 		arrayLabelsGraf = new Array(21).fill(0); // Array de 21 posiciones con 0 en cada posición
 		dades.forEach(dada => { // Datos movie
-			dada.genres.forEach(tipus => { // Generos movie
+			dada[1].forEach(tipus => { // Tipos movie
 				arrayLabelsGraf[arrayLabels.indexOf(tipus)] += 1;
 			});
 		});
 	} else return;
 
-	// Crea los colores del chart sólo cuando éste se inicia por primera vez
+	// Crea los colores del chart sólo cuando se inicia por primera vez
 	if (!iniciado) {
 		// For que por cada label asigna un color rgb aleatorio al array borderColor
 		arrayLabels.forEach(label => {
@@ -300,7 +313,6 @@ function creaChart(dades) {
 		borderColor.forEach(color => {
 			backgroundColor.push(`${color.substring(0, color.length - 1)}, 0.2)`);
 		});
-		iniciado = true;
 	}
 
 	// Variable con los datos del Polar Chart
