@@ -23,13 +23,17 @@ let backgroundColor = []; // Color del Fondo
 let iniciado = false; // Booleano que indica si el chart se ha iniciado o no
 let orderAsc; // Booleano que indica si la tabla se ordena ascendente o descendente
 let ultimaDada; // Variable que almacena el último dato ordenado
+let dadesSort; // Variable para ordenar la tabla / mostrar mediana
 
 // POKEMONS
 fetch("js/data/pokemon.json")
 .then((response) => response.json())
 .then((data) => {
 	dades = data.pokemon;
-	dades.forEach(dada => { pokemons.push(dada); });	
+	dades.forEach(dada => { 
+	dada.weight = (dada.weight).substring(0, (dada.weight).length -3)
+		pokemons.push(dada); 
+	});	
 });
 
 // MUNICIPIS
@@ -83,7 +87,7 @@ function refresh() { location.reload(); }
    Recibe por parámetros si el órden es ascendente o descendente */
 function orderList(dada) {
 	if (dada != ultimaDada) orderAsc = true;
-    let dades = getDades();
+	let dades = dadesSort;
 	if (typeof dades[0][dada] == 'number' || !isNaN(dades[0][dada])) { // Si el valor a ordenar es un número
         if (orderAsc) { dades.sort((a, b) => a[dada] - b[dada]); orderAsc = false; } 
 		else { dades.sort((a, b) => b[dada] - a[dada]); orderAsc = true; }
@@ -92,7 +96,7 @@ function orderList(dada) {
 		else { dades.sort((a, b) => b[dada].localeCompare(a[dada])); orderAsc = true; }
 	}
 	ultimaDada = dada;
-    creaTaula(); // Vuelve a crear la tabla ordenada
+    printList(dades); // Vuelve a crear la tabla ordenada
 }
 
 /* Event Listener que detecta cada vez que escrivimos en la barra de búsqueda 
@@ -171,7 +175,8 @@ function printList(dades) {
 	if (tipusDada == null) return; // Si no hay ningún radio button chequeado no hacemos nada
 	let divTable = document.getElementById('resultat'); // div de la table
 	let table = '<table>'; // table
-	
+	dadesSort = dades;
+
 	if (dades.length != 0) {
 		// Switch para mostrar los datos de la lista 
 		switch (tipusDada) {
